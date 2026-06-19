@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/zuriapp-frontend
-  VITE_API_URL: http://${{ secrets.EC2_PUBLIC_IP }}:5000
+  VITE_API_URL: http://${{ secrets.EC2_PUBLIC_IP }}:30050
 
 jobs:
 
