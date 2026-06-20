@@ -15,20 +15,42 @@ This is the React frontend for Zuri Market. It displays products fetched from th
 ## 3. Project Structure
 
 ```
-src/
-├── components/
-│   ├── Navbar.jsx
-│   ├── Hero.jsx
-│   ├── FilterBar.jsx
-│   ├── ProductGrid.jsx
-│   ├── ProductCard.jsx
-│   └── CartSidebar.jsx
-├── hooks/
-│   └── useCart.js
-├── App.jsx
-├── main.jsx
-└── index.css
+zuri-market-orion-frontend/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # CI/CD: test, audit, build, scan, push, deploy to k3s
+├── k8s/
+│   └── deployment.yaml         # Kubernetes Deployment + NodePort Service
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx          # Store name, nav links, cart button with item-count badge
+│   │   ├── Hero.jsx             # Landing banner: headline, intro copy, CTA buttons
+│   │   ├── FilterBar.jsx        # Category filter pills (All / Gear / Apparel / Home / Tech)
+│   │   ├── ProductGrid.jsx      # Grid layout + loading skeletons, error state, empty state
+│   │   ├── ProductCard.jsx      # Single product card with image, price, "Add to cart"
+│   │   └── CartSidebar.jsx      # Slide-out cart: line items, quantity steppers, subtotal
+│   ├── hooks/
+│   │   └── useCart.js            # Cart state: add/remove/update/clear, derived count & total
+│   ├── App.jsx                    # Top-level state, data fetching, wires everything together
+│   ├── main.jsx                    # React root render
+│   └── index.css                    # Global styles & CSS custom properties (theme variables)
+├── index.html                          # HTML entry point, loads /src/main.jsx as a module
+├── vite.config.js                       # Dev server port + /api proxy to the backend
+├── Dockerfile                            # Two-stage build: Node build stage → Nginx runtime
+├── .dockerignore
+├── .env.example                            # Template listing required environment variables
+├── .gitignore
+├── package.json
+└── package-lock.json
 ```
+
+- **`vite.config.js`** — Fixes the dev server to port `3000` and proxies any `/api/*` request to the backend URL set in `VITE_API_URL`.
+- **`index.html`** — The single HTML page Vite serves; it just mounts the React app via `/src/main.jsx`.
+- **`Dockerfile`** — Builds the production image (see [Docker](#7-docker) below).
+- **`k8s/deployment.yaml`** — Describes how the app runs in Kubernetes once deployed.
+- **`.github/workflows/deploy.yml`** — The pipeline that builds, scans, pushes, and deploys the app on every push to `main`.
+
+### `src/` in detail
 
 - **`Navbar.jsx`** — Renders the store name and a cart button with an item-count badge. Receives `storeName`, `cartCount`, `onCartOpen`.
 - **`Hero.jsx`** — Renders the landing banner/headline below the navbar. Receives `storeName`.
@@ -37,6 +59,7 @@ src/
 - **`ProductCard.jsx`** — Renders a single product (image, category, name, description, price, "Add to cart" button). Receives `product`, `onAddToCart`.
 - **`CartSidebar.jsx`** — Renders the slide-out cart with line items, quantity steppers, subtotal, and checkout/clear buttons. Receives `cartItems`, `cartTotal`, `onRemove`, `onUpdateQuantity`, `onClear`, `onClose`.
 - **`useCart.js`** — Custom hook holding cart state and exposing `cartItems`, `addToCart`, `removeFromCart`, `updateQuantity`, `clearCart`, `cartCount`, `cartTotal`.
+- **`App.jsx`** — Fetches `/api/store` and `/api/products` on load and whenever the active category changes, manages cart-sidebar open/close state, and passes data/handlers down to every component above.
 
 ## 4. Environment Variables
 
@@ -56,13 +79,24 @@ cp .env.example .env
 ## 5. Running Locally
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/Tonyb23/zuri-market-orion-frontend.git
+cd zuri-market-orion-frontend
+
+# 2. Install dependencies
 npm install
+
+# 3. Set up environment variables
+cp .env.example .env
+# then edit .env and set VITE_API_URL / VITE_STORE_NAME
+
+# 4. Start the dev server
 npm run dev
 ```
 
-The dev server starts on `http://localhost:3000`.
+The dev server starts on **`http://localhost:3000`** (port is fixed in `vite.config.js`). Any request to `/api/*` is proxied from there to whatever `VITE_API_URL` resolves to, so the browser always talks to `localhost:3000` and never needs CORS configured for local dev.
 
-The backend API must also be running (at the URL set in `VITE_API_URL`) for the storefront to load — without it, the product grid will show its error state and the store name will fall back to `VITE_STORE_NAME`.
+The backend API must also be running (at the URL set in `VITE_API_URL`, default `http://localhost:5000`) for the storefront to load — without it, the product grid will show its error state and the store name will fall back to `VITE_STORE_NAME`.
 
 ## 6. Building for Production
 
@@ -91,6 +125,8 @@ docker run -p 8080:80 tonyb23/zuriapp-frontend
 ```
 
 Docker Hub image: **`tonyb23/zuriapp-frontend`**
+
+> In the CI/CD pipeline, `VITE_API_URL` is set to the backend's NodePort address on the EC2 host (`http://<EC2_PUBLIC_IP>:30050`) at build time, since `VITE_API_URL` gets baked into the static bundle — it can't be changed after the image is built.
 
 ## 8. Component Reference
 
