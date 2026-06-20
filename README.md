@@ -119,7 +119,7 @@ npm run preview
 
 The `Dockerfile` uses a two-stage build:
 
-# demo 
+# demo v1
 1. **Build stage** — `node:18-alpine`. Installs dependencies with `npm ci`, accepts `VITE_API_URL` as a build argument, and runs `npm run build`.
 2. **Runtime stage** — `nginx:alpine`. Copies only the `dist/` output from the build stage and serves it on port `80`.
 
