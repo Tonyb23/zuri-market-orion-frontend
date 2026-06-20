@@ -1,5 +1,8 @@
 # Zuri Market — Frontend
 
+## Architecture Diagram
+![Architecture Diagram](https://raw.githubusercontent.com/Tonyb23/zuri-market-orion-frontend/1dcd84f5d1be38099473329429b941b0990ac7bc/zurimarket-architecture.svg)
+
 ## 1. Project Overview
 
 This is the React frontend for Zuri Market. It displays products fetched from the backend API, lets the user filter products by category, and includes a cart with quantity management. The user sees a storefront — a hero banner, a filterable product grid, and a slide-out cart — and every product/store request goes to a separate backend API over HTTP.
