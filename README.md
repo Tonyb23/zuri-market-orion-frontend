@@ -2,13 +2,13 @@
 
 ## 1. Project Overview
 
-This is the customer-facing storefront for Zuri Market. It displays a product catalog with filtering, lets users build a cart, and connects to the Zuri Market backend [Zuri Market - Backend](https://github.com/Tonyb23/zuri-market-orion-backend) API over HTTP for live product data and cart validation.  
+This is the customer-facing storefront for Zuri Market. It displays a product catalog with filtering, lets users build a cart, and connects to the **[Zuri Market - Backend](https://github.com/Tonyb23/zuri-market-orion-backend)** API over HTTP for live product data and cart validation.  
 The app is built with React and Vite, compiled to static files, containerised with a two-stage Docker build (Node.js → nginx), and deployed automatically to a k3s Kubernetes cluster on AWS EC2 via a GitHub Actions CI/CD pipeline.
 
 ## Related Repositories
 
-[Zuri Market - Backend](https://github.com/Tonyb23/zuri-market-orion-backend)
-[Zuri Market - Infrastructure](https://github.com/Tonyb23/zuri-market-orion-infrastructure)
+**[Zuri Market - Backend](https://github.com/Tonyb23/zuri-market-orion-backend)**  
+**[Zuri Market - Infrastructure](https://github.com/Tonyb23/zuri-market-orion-infrastructure)**
 
 ## Architecture Diagram
 ![Architecture Diagram](zurimarket-architecture.svg)
